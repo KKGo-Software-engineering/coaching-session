@@ -4,4 +4,7 @@ echo "Running unit tests"
 pushd week-1
 echo "Running unit tests for week-1"
 go test ./... -v
+
+echo "Running linter for week-1"
+golangci-lint run
 popd
