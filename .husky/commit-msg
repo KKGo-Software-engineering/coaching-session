@@ -1,0 +1,10 @@
+#!/bin/sh
+
+commit_msg=`head -n1 "$1"`
+commit_regex='^(GO-[0-9]{1,3}: .*|CI: .*)$'
+error_msg="Error: Commit message does not follow expected pattern (GO-123: xxx or CI: xxx)"
+echo "Start checking commit message pattern"
+
+[[ "$commit_msg" =~ $commit_regex ]] || { echo "$error_msg" >&2; exit 1; }
+
+echo "Commit message pattern is correct"
