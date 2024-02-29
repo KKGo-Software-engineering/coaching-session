@@ -2,8 +2,8 @@
 
 echo "Running unit tests & linter"
 pushd week-1
-#echo "Running unit tests for week-1"
-#go test ./... -v
+echo "Running unit tests for week-1"
+go test ./... -v
 #
 #echo "Running linter for week-1"
 #golangci-lint run
