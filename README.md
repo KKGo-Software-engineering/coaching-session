@@ -5,4 +5,5 @@
 - [husky](https://typicode.github.io/husky/get-started.html)
 
 ## Week 2: Software Design
-
+- Architecture Decision Record
+- `brew install adr-tools`
