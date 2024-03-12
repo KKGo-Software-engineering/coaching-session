@@ -7,3 +7,5 @@
 ## Week 2: Software Design
 - Architecture Decision Record
 - `brew install adr-tools`
+
+## Week 3: Software Quality
