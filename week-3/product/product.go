@@ -26,7 +26,6 @@ func (p Product) ProductHandler(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	defer rows.Close()
-
 	var products []DB
 	for rows.Next() {
 		var p DB
@@ -37,6 +36,5 @@ func (p Product) ProductHandler(c echo.Context) error {
 		}
 		products = append(products, p)
 	}
-
 	return c.JSON(http.StatusOK, products)
 }
