@@ -26,11 +26,15 @@ type Storer interface {
 	Products() (DB, error)
 }
 
+type Err struct {
+	Message string `json:"message"`
+}
+
 func (p Product) ProductHandler(c echo.Context) error {
 	id := c.Param("id")
 	rows, err := p.db.Query("SELECT product_id,name,category FROM product WHERE product_id = $1", id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusInternalServerError, Err{Message: err.Error()})
 	}
 	defer rows.Close()
 	var product DB
