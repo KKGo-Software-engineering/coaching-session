@@ -18,7 +18,7 @@ func main() {
 	defer p.Db.Close()
 
 	e := echo.New()
-	handler := product.New(p)
+	handler := product.New(p.Db)
 	e.GET("/products", handler.ProductHandler)
 	e.Logger.Fatal(e.Start(":1323"))
 }
