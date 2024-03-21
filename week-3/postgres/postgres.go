@@ -8,7 +8,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func New() (*sql.DB, error) {
+type Postgres struct {
+	Db *sql.DB
+}
+
+func New() (*Postgres, error) {
 	databaseSource := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable", "localhost", 5432, "root", "password", "product_master")
 	db, err := sql.Open("postgres", databaseSource)
@@ -20,5 +24,5 @@ func New() (*sql.DB, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return db, nil
+	return &Postgres{Db: db}, nil
 }

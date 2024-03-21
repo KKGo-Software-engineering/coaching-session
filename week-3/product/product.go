@@ -1,14 +1,14 @@
 package product
 
 import (
-	"database/sql"
+	"github.com/KKGo-Software-engineering/coaching-session/week-3/postgres"
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
 )
 
 type Product struct {
-	db *sql.DB
+	*postgres.Postgres
 }
 
 type DB struct {
@@ -16,12 +16,16 @@ type DB struct {
 	Name      string `postgres:"name"`
 }
 
-func New(db *sql.DB) Product {
-	return Product{db: db}
+func New(db *postgres.Postgres) Product {
+	return Product{db}
+}
+
+type Storer interface {
+	Products() ([]DB, error)
 }
 
 func (p Product) ProductHandler(c echo.Context) error {
-	rows, err := p.db.Query("SELECT product_id,name FROM product")
+	rows, err := p.Db.Query("SELECT product_id,name FROM product")
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
