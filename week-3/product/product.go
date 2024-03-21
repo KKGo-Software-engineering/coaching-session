@@ -23,7 +23,7 @@ func New(db *sql.DB) Product {
 }
 
 type Storer interface {
-	Products() (DB, error)
+	ProductById(id string) (DB, error)
 }
 
 type Err struct {
@@ -48,7 +48,7 @@ func (p Product) ProductHandler(c echo.Context) error {
 		product = p
 	}
 	if product.ProductID == 0 {
-		return c.JSON(http.StatusNotFound, Err{Message: "product not found"})
+		c.JSON(http.StatusNotFound, Err{Message: "product not found"})
 	}
 	if product.Category == "Book" {
 		product.Name = "Book: " + product.Name
