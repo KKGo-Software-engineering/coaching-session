@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 )
 
@@ -31,7 +32,7 @@ func TestProduct(t *testing.T) {
 		if err := json.Unmarshal(gotJson, &got); err != nil {
 			t.Errorf("unable to unmarshal json: %v", err)
 		}
-		if got != want {
+		if !reflect.DeepEqual(got, want) {
 			t.Errorf("expected %v but got %v", want, got)
 		}
 	})
@@ -57,7 +58,7 @@ func TestProduct(t *testing.T) {
 		if err := json.Unmarshal(gotJson, &got); err != nil {
 			t.Errorf("unable to unmarshal json: %v", err)
 		}
-		if got != want {
+		if !reflect.DeepEqual(got, want) {
 			t.Errorf("expected %v but got %v", want, got)
 		}
 	})
