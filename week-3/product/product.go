@@ -1,15 +1,12 @@
 package product
 
 import (
-	"database/sql"
 	"github.com/labstack/echo/v4"
-	"log"
 	"net/http"
 )
 
 type Product struct {
 	store Storer
-	db    *sql.DB
 }
 
 type DB struct {
@@ -18,8 +15,8 @@ type DB struct {
 	Category  string `postgres:"category" json:"category"`
 }
 
-func New(db *sql.DB) Product {
-	return Product{db: db}
+func New(store Storer) Product {
+	return Product{store: store}
 }
 
 type Storer interface {
@@ -32,20 +29,9 @@ type Err struct {
 
 func (p Product) ProductHandler(c echo.Context) error {
 	id := c.Param("id")
-	rows, err := p.db.Query("SELECT product_id,name,category FROM product WHERE product_id = $1", id)
+	product, err := p.store.ProductById(id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, Err{Message: err.Error()})
-	}
-	defer rows.Close()
-	var product DB
-	for rows.Next() {
-		var p DB
-		err = rows.Scan(&p.ProductID, &p.Name, &p.Category)
-		if err != nil {
-			log.Fatal(err)
-			return err
-		}
-		product = p
 	}
 	if product.ProductID == 0 {
 		return c.JSON(http.StatusNotFound, Err{Message: "product not found"})

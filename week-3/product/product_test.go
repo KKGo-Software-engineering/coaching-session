@@ -2,13 +2,21 @@ package product
 
 import (
 	"encoding/json"
-	"github.com/KKGo-Software-engineering/coaching-session/week-3/postgres"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
 )
+
+type StubProduct struct {
+	product DB
+	err     error
+}
+
+func (s StubProduct) ProductById(id string) (DB, error) {
+	return s.product, s.err
+}
 
 func TestProduct(t *testing.T) {
 	t.Run("given Refactoring as a product, product name should return Book: Refactoring", func(t *testing.T) {
@@ -20,8 +28,11 @@ func TestProduct(t *testing.T) {
 		c.SetPath("/products/:id")
 		c.SetParamNames("id")
 		c.SetParamValues("3")
-		db, _ := postgres.New()
-		p := New(db.Db)
+
+		stubRefactoring := StubProduct{
+			product: DB{Name: "Refactoring", Category: "Book", ProductID: 3},
+		}
+		p := New(stubRefactoring)
 
 		p.ProductHandler(c)
 
@@ -46,8 +57,11 @@ func TestProduct(t *testing.T) {
 		c.SetPath("/products/:id")
 		c.SetParamNames("id")
 		c.SetParamValues("1")
-		db, _ := postgres.New()
-		p := New(db.Db)
+
+		stubIphone := StubProduct{
+			product: DB{Name: "iPhone 15 Pro", Category: "Mobile", ProductID: 1},
+		}
+		p := New(stubIphone)
 
 		p.ProductHandler(c)
 
@@ -60,6 +74,26 @@ func TestProduct(t *testing.T) {
 		}
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("expected %v but got %v", want, got)
+		}
+	})
+
+	t.Run("given unable to connect to database should return Internal Server Error", func(t *testing.T) {
+		e := echo.New()
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+		c.SetPath("/products/:id")
+		c.SetParamNames("id")
+		c.SetParamValues("10")
+
+		stubError := StubProduct{err: echo.ErrInternalServerError}
+		p := New(stubError)
+
+		p.ProductHandler(c)
+
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("expected status code %d but got %d", http.StatusInternalServerError, rec.Code)
 		}
 	})
 }
