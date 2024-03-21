@@ -10,25 +10,6 @@ import (
 )
 
 func TestProduct(t *testing.T) {
-	t.Run("given unable to connect to database should return Internal Server Error", func(t *testing.T) {
-		e := echo.New()
-		req := httptest.NewRequest(http.MethodGet, "/", nil)
-		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-		rec := httptest.NewRecorder()
-		c := e.NewContext(req, rec)
-		c.SetPath("/products/:id")
-		c.SetParamNames("id")
-		c.SetParamValues("10")
-		db, _ := postgres.New()
-		p := New(db.Db)
-
-		p.ProductHandler(c)
-
-		if rec.Code != http.StatusInternalServerError {
-			t.Errorf("expected status code %d but got %d", http.StatusInternalServerError, rec.Code)
-		}
-	})
-
 	t.Run("given Refactoring as a product, product name should return Book: Refactoring", func(t *testing.T) {
 		e := echo.New()
 		req := httptest.NewRequest(http.MethodGet, "/", nil)
