@@ -13,8 +13,9 @@ type Product struct {
 }
 
 type DB struct {
-	ProductID int    `postgres:"product_id"`
-	Name      string `postgres:"name"`
+	ProductID int    `postgres:"product_id" json:"product_id"`
+	Name      string `postgres:"name" json:"name"`
+	Category  string `postgres:"category" json:"category"`
 }
 
 func New(db *sql.DB) Product {
@@ -22,24 +23,32 @@ func New(db *sql.DB) Product {
 }
 
 type Storer interface {
-	Products() ([]DB, error)
+	Products() (DB, error)
 }
 
 func (p Product) ProductHandler(c echo.Context) error {
-	rows, err := p.db.Query("SELECT product_id,name FROM product")
+	id := c.Param("id")
+	rows, err := p.db.Query("SELECT product_id,name,category FROM product WHERE product_id = $1", id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	defer rows.Close()
-	var products []DB
+	var product DB
 	for rows.Next() {
 		var p DB
-		err = rows.Scan(&p.ProductID, &p.Name)
+		err = rows.Scan(&p.ProductID, &p.Name, &p.Category)
 		if err != nil {
 			log.Fatal(err)
 			return err
 		}
-		products = append(products, p)
+		product = p
 	}
-	return c.JSON(http.StatusOK, products)
+
+	if product.Category == "Book" {
+		product.Name = "Book: " + product.Name
+	}
+	if product.Category == "Mobile" {
+		product.Name = "Mobile: " + product.Name
+	}
+	return c.JSON(http.StatusOK, product)
 }

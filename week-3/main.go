@@ -19,6 +19,6 @@ func main() {
 
 	e := echo.New()
 	handler := product.New(p.Db)
-	e.GET("/products", handler.ProductHandler)
+	e.GET("/products/:id", handler.ProductHandler)
 	e.Logger.Fatal(e.Start(":1323"))
 }

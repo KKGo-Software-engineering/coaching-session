@@ -1,13 +1,13 @@
 -- Creation of product table
+CREATE TYPE category AS ENUM ('Mobile', 'Book');
+
 CREATE TABLE IF NOT EXISTS product(
-	product_id INT NOT NULL,
+	product_id SERIAL PRIMARY KEY,
 	name varchar(250) NOT NULL,
-	PRIMARY KEY(product_id)
+	category category NOT NULL
 );
 
-INSERT INTO product(product_id, name) VALUES
-(1, 'Iphone 12'),
-(2, 'Samsung S21'),
-(3, 'Xiaomi Mi 11'),
-(4, 'OnePlus 9'),
-(5, 'Google Pixel 5');
+INSERT INTO product(name, category) VALUES
+('iPhone 15 Pro', 'Mobile'),
+('Samsung S21', 'Mobile'),
+('Refactoring', 'Book');
